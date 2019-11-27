@@ -1270,6 +1270,11 @@ class FreeAggregationsRule(BaseAggregationRule):
 
     def check_matches(self, timestamp, query_key, aggregation_data):
         jq_filter = self.rules.get('jq')
-        matches = jq(jq_filter).transform(aggregation_data)
+        try:
+            matches = jq(jq_filter).transform(aggregation_data)
+        except Exception as e:
+            matches = []
+            elastalert_logger.warn('jq parsing failed : {}'.format(e))
+            elastalert_logger.debug('{}'.format(aggregation_data))
         for match in matches:
             self.add_match(match)
