@@ -32,6 +32,7 @@ from .config import load_conf
 from .enhancements import DropMatchException
 from .kibana_discover import generate_kibana_discover_url
 from .ruletypes import FlatlineRule
+from .ruletypes import FreeAggregationsRule
 from .util import add_raw_postfix
 from .util import cronite_datetime_to_timestamp
 from .util import dt_to_ts
@@ -785,6 +786,8 @@ class ElastAlerter(object):
         # Flatline ruletype sets "key" instead of the actual query_key
         if isinstance(rule['type'], FlatlineRule) and 'key' in match:
             return str(match['key'])
+        if isinstance(rule['type'], FreeAggregationsRule):
+            return self.get_named_key_value(rule, match, 'jq_key')
         return self.get_named_key_value(rule, match, 'query_key')
 
     def get_aggregation_key_value(self, rule, match):

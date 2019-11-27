@@ -4,6 +4,7 @@ import datetime
 import sys
 
 from blist import sortedlist
+from jq import jq
 
 from .util import add_raw_postfix
 from .util import dt_to_ts
@@ -1254,3 +1255,21 @@ class PercentageMatchRule(BaseAggregationRule):
         if 'min_percentage' in self.rules and match_percentage < self.rules['min_percentage']:
             return True
         return False
+
+
+class FreeAggregationsRule(BaseAggregationRule):
+    required_options = frozenset(['jq', 'aggs'])
+
+    def __init__(self, *args):
+        super(FreeAggregationsRule, self).__init__(*args)
+        self.ts_field = self.rules.get('timestamp_field', '@timestamp')
+        self.rules['aggregation_query_element'] = self.generate_aggregation_query()
+
+    def generate_aggregation_query(self):
+        return self.rules.get('aggs')
+
+    def check_matches(self, timestamp, query_key, aggregation_data):
+        jq_filter = self.rules.get('jq')
+        matches = jq(jq_filter).transform(aggregation_data)
+        for match in matches:
+            self.add_match(match)
