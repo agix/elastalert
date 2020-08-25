@@ -8,7 +8,7 @@ from setuptools import setup
 base_dir = os.path.dirname(__file__)
 setup(
     name='elastalert',
-    version='0.2.2',
+    version='0.2.4',
     description='Runs custom filters on Elasticsearch and alerts on matches',
     author='Quentin Long',
     author_email='qlo@yelp.com',
@@ -48,7 +48,6 @@ setup(
         'stomp.py>=4.1.17',
         'texttable>=0.8.8',
         'twilio>=6.0.0,<6.1',
-        'thehive4py>=1.4.4',
         'python-magic>=0.4.15',
         'cffi>=1.11.5'
     ]
